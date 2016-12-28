@@ -94,18 +94,16 @@ Impossible=[[0,0,0,0,0,0,0,0,0],
 def check_sudoku(grid) :
     ### Sanity Checking ###
     if grid is None : return None
-    import types
-    if (len(grid) != 9) or ( type(grid) != types.ListType ) : return None
+    if (len(grid) != 9) or (type(grid) is not list) : return None
     for row in grid :
-        if (len(row) != 9) or ( type(row) != types.ListType ) : return None
+        if (len(row) != 9) or (type(row) is not list) : return None
         for entry in row :
-            if (type(entry)!= types.IntType) or ( entry not in range(0,10) ) : return None
-        
+            if (type(entry) is not int) or (entry not in range(0,10)) : return None
     
     ### Valid grid checking ###
     # step 1: all rows valid
     for row in grid :
-        available = range(0,10)
+        available = list(range(0,10))
         for item in row : # row element
             if item in available : 
                 if item != 0: available.remove(item) # only 1 of each number per row
@@ -114,7 +112,7 @@ def check_sudoku(grid) :
         
     # step 2: all columns valid
     for j in range(0,9) : # column
-        available = range(0,10)
+        available = list(range(0,10))
         for i in range(0,9) : # row
             item = grid[i][j] # column element
             if item in available:
@@ -125,7 +123,7 @@ def check_sudoku(grid) :
     # step 3: all boxes valid 
     for m in range(0,3) : # row multiplier
         for n in range(0,3) : # column multiplier
-            available = range(0,10) # 'valid items'
+            available = list(range(0,10)) # 'valid items'
             for i in range(1,4) : # row
                 for j in range(1,4) : # column
                     item = grid[i-1+m*3][j-1+n*3]
@@ -149,10 +147,10 @@ def solve_sudoku(grid) :
             self.cell = row*9+col+1 # we don't make use of this
             self.val = val
             if val != 0 :
-                self.cannot = range(0,10)
+                self.cannot = list(range(0,10))
                 self.possible = []
             else :
-                self.possible = range(1,10)
+                self.possible = list(range(1,10))
                 self.cannot = [0]
         
         def __str__(self) : 
@@ -173,9 +171,9 @@ def solve_sudoku(grid) :
                 self.cannot.append(val)
                 self.cannot.sort()
             
-            total = self.cannot+self.possible
+            total = self.cannot + self.possible
             total.sort()
-            assert total == range(0,10)
+            assert total == list(range(0,10))
             
             return ret_val
         
@@ -186,9 +184,9 @@ def solve_sudoku(grid) :
             assert self.val == 0
             
             self.val = val
-            self.cannot = range(0,10)
+            self.cannot = list(range(0,10))
             self.possible = []
-            print self
+            print (self)
         
     
     class Sudoku_Matrix :
@@ -248,7 +246,7 @@ def solve_sudoku(grid) :
                         ret_list.append( game.matrix[row][col] )
                     else :
                         assert game.matrix[row][col].possible == []
-                        assert game.matrix[row][col].cannot == range(0,10)
+                        assert game.matrix[row][col].cannot == list(range(0,10))
             
             ret_list.sort( key=lambda node: len(node.possible) )
             return ret_list
@@ -299,23 +297,20 @@ def solve_sudoku(grid) :
         # determine if this puzzle is complete
         def Done(self) :
             for i in range(0,9) : 
-                if ( 0 in self.getBoxVals(i) ) or (0 in self.getColVals(i) ) or (0 in self.getRowVals(i) ) : 
+                if (0 in self.getBoxVals(i)) or (0 in self.getColVals(i)) or (0 in self.getRowVals(i)) : 
                     return False
             
             # run some assertions on our supposedly complete game before returning
             for i in range(0,9) :
                 for j in range(0,9) :
-                    assert self.matrix[i][j].cannot == range(0,10)
+                    assert self.matrix[i][j].cannot == list(range(0,10))
                     assert self.matrix[i][j].possible == []
             assert check_sudoku( self.output() ) is True
             return True
         
-        def DoneRow(self, row) :
-            return 0 not in self.getRowVals(row)
-        def DoneCol(self, col) :
-            return 0 not in self.getColVals(col)
-        def DoneBox(self, box) :
-            return 0 not in self.getBoxVals(box)
+        def DoneRow(self, row) : return 0 not in self.getRowVals(row)
+        def DoneCol(self, col) : return 0 not in self.getColVals(col)
+        def DoneBox(self, box) : return 0 not in self.getBoxVals(box)
         
         # reduce 'possible' and increase 'cannot' values for each node in a row
         def reduceRow(self, row) :
@@ -416,10 +411,9 @@ def solve_sudoku(grid) :
             return game
         
         
-        
         def node_analysis(node) :
             if (node.val == 0) and len(node.possible) == 0 : 
-                assert node.cannot == range(0,10)
+                assert node.cannot == list(range(0,10))
                 print ("Found an impossible game (node with 0 possibilities) : " + str(node.coord()) )
                 return -1
             
@@ -513,7 +507,7 @@ def solve_sudoku(grid) :
         # check if any nodes have 0 possibilities
         answ = game.reduce_Matrix()
         if answ == False :
-            print "Goodbye"
+            print ("Goodbye")
             return False
         elif answ == -1 :
             print ("DEBUG !!!! ")
@@ -626,29 +620,39 @@ def solve_sudoku(grid) :
             # iterate through all possibilities
             # and guess; if all possibilities
             # fail, this node cannot be solved!
-            print("NO NODES POSSIBLE FOR THIS GAME !!!")
+            print ("NO NODES POSSIBLE FOR THIS GAME !!!")
             return False
             
     
     if check_sudoku(grid) is not True :
         return check_sudoku( grid )
     else :
-        return solve_game( Sudoku_Matrix ( grid ) )
+        return solve_game( Sudoku_Matrix(grid) )
 
 
 def test() :
     print ("Testing sudoku solver!")
-    
+    """
     # can't be done
-    print solve_sudoku(ill_formed)
-    print solve_sudoku(invalid)
-    print solve_sudoku(Impossible)
+    print ( solve_sudoku(ill_formed) )
+    print ( solve_sudoku(invalid) )
+    print ( solve_sudoku(Impossible) )
     assert str(valid) == str( solve_sudoku(valid) )
     
     # to-solve
-    print solve_sudoku(easy)
-    print solve_sudoku(hard)
-    print solve_sudoku(Null) # all zeroes
-
+    print ( solve_sudoku(easy) )
+    print ( solve_sudoku(hard) )
+    print ( solve_sudoku(Null) ) # all zeroes
+    """
+    Jeff=[[6,3,7,8,1,4,9,5,2],
+          [8,0,0,0,0,0,6,4,1],
+          [4,0,1,2,6,0,3,8,7],
+          [7,0,5,0,0,0,1,0,0],
+          [3,0,4,1,0,8,5,7,6],
+          [1,0,0,0,0,0,4,0,0],
+          [5,4,8,6,7,3,2,1,9],
+          [9,0,6,0,0,0,0,3,5],
+          [2,0,3,9,0,0,0,6,4]]
+    print ( solve_sudoku(Jeff) )
 test()
-#raw_input("\nPress 'Enter' to exit")
+#raw_input ("\nPress 'Enter' to exit")
