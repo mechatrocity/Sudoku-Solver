@@ -53,8 +53,7 @@ The Sudoku_Matrix class is the heart of the Sudoku Solver. It contains 81 instan
 - reduce_Node(row, col) : given a node's x-y coordinates, find all values it cannot be based on other nodes in the same row/col/box
 - reduce_Matrix() : reduces all nodes in a matrix similar to reduce_Node, however will go through the ENTIRE matrix at once and thus does not require any parameters. Additionally, after an unsolved node is reduced, this function will check if there are no possibilities -- if this is the case, we have an over-constrained and therefore impossible game.
 - reduce_Dependancies(nodes) : This is actually a helper function of solve_game(..) described below, and may be tricky to wrap your head around, and is best explained with an example. Given a 9-length list of Node instances (a full row, column, or box) if n nodes have the exact same n-length list of possibilities, then no other Nodes in that row/col/box can contain any of those same possibilities.
-
-*Example*: if in a row there are two unanswered nodes with the exact same possibilities, say [5, 6], then we know 5 and 6 MUST be in those two nodes. If a third node had [5, 6, 8] as its possibilities we can effectively reduce its possibilities down to only [8].
+  - *Example*: if in a row there are two unanswered nodes with the exact same possibilities, say [5, 6], then we know 5 and 6 MUST be in those two nodes. If a third node had [5, 6, 8] as its possibilities we can effectively reduce its possibilities down to only [8].
 
 #### Solving Functions
 - solve_game(game, loop) : given a Sudoku_Matrix instance and optional unsigned integer 'loop', this is the heart and soul of this assignment. The loop parameter is used internally in the function to keep track of how many recursion iterations we go through, with the default being 0. There are several helper functions defined within solve_game;
