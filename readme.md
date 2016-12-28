@@ -17,7 +17,7 @@ The Sudoku_Matrix class is the heart of the Sudoku Solver. It contains 81 instan
 - possible : list of unsigned integers, represents the list of all possible integers this Node can be; when solved, will be an empty (0-length) list
 - cannot : list of unsigned integers, represents the "opposite" of possible, a list of all values that this node CANNOT be. For a solved Node this will be the full range of integers from 0 through 9. Therefore, possible + cannot = full range of integers from 0 to 9 at any given time, so this attribute is redundant and ONLY used for assertion checks.
 
-%% Functions of the Node class
+### Functions of the Node class
 - coord() : returns a string of this Node's (x,y) coordinates within the Sudoku puzzle (NOT a 2-length list of integers!)
 - not_possible(val) : passed an unsigned integer, removes 'val' from the list of possibilities for this Node. Returns *True* if val was in the list of possibilities to indicate that we have done meaningful work by calling this function, otherwise returns *False*.
 - set(val) : passed an unsigned integer, solves a given node; this fills in the 'val' attribute, and makes 'possible' a 0-element list. No return value, but will print the node and value so we can see our progress while the program runs.
